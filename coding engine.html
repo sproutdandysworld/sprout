@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Links Example</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4ebe1;
+            color: #4b3832;
+            text-align: center;
+            padding: 30px;
+            position: relative;
+            display: flex;
+        }
+        .create-project {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #8b5a2b;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .create-project:hover {
+            background-color: #6d4c41;
+        }
+        .code-editor {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            height: 100vh;
+            background: #fffaf0;
+            width: 100%;
+            position: relative;
+        }
+        .code-blocks {
+            width: 200px;
+            background: #f8e1ba;
+            padding: 10px;
+            border-radius: 10px;
+            margin-right: 10px;
+        }
+        .code-block {
+            width: 90%;
+            max-width: 800px;
+            min-height: 300px;
+            padding: 15px;
+            background: #f8e1ba;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .code-block[contenteditable="true"] {
+            outline: none;
+        }
+        .preview-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            border: 2px solid #8b5a2b;
+            background: white;
+            resize: both;
+            overflow: hidden;
+        }
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .viewport-controls {
+            position: absolute;
+            bottom: 130px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .draggable {
+            padding: 5px;
+            background: #d3a673;
+            margin-bottom: 5px;
+            cursor: grab;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .bouncy-text {
+            display: inline-block;
+            animation: bounce 1s infinite;
+        }
+    </style>
+    <script>
+        function updatePreview() {
+            const previewFrame = document.getElementById("preview");
+            const codeContent = document.querySelector(".code-block").innerText;
+            const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            doc.open();
+            doc.write(codeContent);
+            doc.close();
+        }
+        
+        function resizePreview(size) {
+            const previewContainer = document.getElementById("previewContainer");
+            previewContainer.style.width = size + "px";
+            previewContainer.style.height = size + "px";
+        }
+        
+        function createProject() {
+            document.body.innerHTML = `
+                <div class="code-editor">
+                    <div class="code-blocks">
+                        <div class="draggable" draggable="true" ondragstart="drag(event)">&lt;h1&gt;Heading&lt;/h1&gt;</div>
+                        <div class="draggable" draggable="true" ondragstart="drag(event)">&lt;p&gt;Paragraph&lt;/p&gt;</div>
+                        <div class="draggable" draggable="true" ondragstart="drag(event)">&lt;a href='#'&gt;Link&lt;/a&gt;</div>
+                        <div class="draggable" draggable="true" ondragstart="drag(event)">&lt;span class='bouncy-text'&gt;Bouncy Text&lt;/span&gt;</div>
+                    </div>
+                    <div class="code-block" contenteditable="true" oninput="updatePreview()" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        &lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;New Project&lt;/title&gt;\n    &lt;style&gt;@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } } .bouncy-text { display: inline-block; animation: bounce 1s infinite; }&lt;/style&gt;\n&lt;/head&gt;\n&lt;body&gt;\n    &lt;h1&gt;Start Coding Here&lt;/h1&gt;\n&lt;/body&gt;\n&lt;/html&gt;
+                    </div>
+                    <div class="viewport-controls">
+                        <label for="viewportSize">Viewport Size:</label>
+                        <input type="range" id="viewportSize" min="100" max="10000" value="100" oninput="resizePreview(this.value)">
+                    </div>
+                    <div class="preview-container" id="previewContainer" style="width:100px; height:100px;">
+                        <iframe class="preview-frame" id="preview"></iframe>
+                    </div>
+                </div>
+            `;
+            updatePreview();
+        }
+        
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+        
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.innerText);
+        }
+        
+        function drop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            document.querySelector(".code-block").innerText += "\n" + data;
+            updatePreview();
+        }
+    </script>
+</head>
+<body>
+    <button class="create-project" onclick="createProject()">Create Project</button>
+    <div class="container">
+        <h1 id="title">Cozy HTML Links</h1>
+        <p>Here are some useful links:</p>
+        <p><a href="https://www.example.com" target="_blank">Example Website</a></p>
+        <p><a href="https://www.google.com" target="_blank">Google</a></p>
+        <p><a href="https://www.wikipedia.org" target="_blank">Wikipedia</a></p>
+    </div>
+</body>
+</html>
